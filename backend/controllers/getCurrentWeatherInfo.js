@@ -2,26 +2,23 @@ const baseurl = "https://api.openweathermap.org/data/2.5/weather";
 const apikey = process.env.API_KEY || "9a0157d7516add71c914fe0c841955c1";
 
 async function fetchcurrent(url, city) {
-   
     const urlapi = `${url}?q=${city}&appid=${apikey}&units=metric`;
     const info = await fetch(urlapi);
+    if (!info.ok) {
+        // Throw an error if the API call was not successful
+        throw new Error(`Weather data not found for ${city}`);
+    }
     return info.json();
 }
 
-const buildUrl = (baseUrl) => {
-    const url = new URL(baseUrl);
-    //console.log(url.toString());
-    return url.toString();
-};
-
-exports.getCurrentWeatherInfoCity = async (req, res) => {
+export const getCurrentWeatherInfoCity = async (req, res) => {
     const city = req.params.city || req.query.city || "Sehore"
     try {
-        
         const weatherData = await fetchcurrent(baseurl, city);
-        const{main, wind ,sys} = weatherData
-       //filtered data
-      const filteredData = {
+        const { main, wind, sys } = weatherData;
+
+        //filtered data
+        const filteredData = {
             temperature: main.temp,
             feels_like: main.feels_like,
             temp_min: main.temp_min,
@@ -39,9 +36,9 @@ exports.getCurrentWeatherInfoCity = async (req, res) => {
     } catch (error) {
         console.log(`Unable to Fetch: ${error}`);
         // Added proper error response
-        return res.status(500).json({ 
+        return res.status(500).json({
             error: "Failed to fetch weather data",
-            message: error.message 
+            message: error.message
         });
     }
 }
