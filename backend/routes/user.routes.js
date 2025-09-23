@@ -11,7 +11,7 @@ UserRouter.post('/register',Register);
 UserRouter.post('/login',login);
 
 //GET the user profile
-UserRouter.get('/profile/:id',requireAuth,()=>{});// proptected route
+UserRouter.get('/profile/:id',requireAuth,()=>{});// protected route
                         //    ^^^^^^^^ auth middleware to protect the route
 //the above middleware will check if the user is authenticated before allowing access to the profile route
 //DELETE the user

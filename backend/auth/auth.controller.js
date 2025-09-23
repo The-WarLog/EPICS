@@ -13,20 +13,17 @@ export const Register= async (req, res,next) => {
         if(existingUser){
             return res.status(400).json({ message: "User already exists" });
         }
-        const hashedPassword =await Bcrypt.hashedPassword(password,12);
-        const newUser = User.create({
+        const hashedPassword = await Bcrypt.hash(password,12);
+        const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
 
         });
-        try {
-            await newUser.save();
-        } catch {
-            const error =
-                new Error("Error! Something went wrong.");
-            return next(error);
-        }
+        
+        //await newUser.save();
+            
+        
         let token;
         try {
             token= jwt.sign({newUserId:newUser._id},process.env.JWT_SECRET,{expiresIn:"1h"}
@@ -36,12 +33,13 @@ export const Register= async (req, res,next) => {
             const error = new Error("Error! Something went wrong.");
             next(error);
         }
-
-
+   
+        res.status(201).json({ message: "User registered successfully", user: newUser });
     }catch(err){
         const error = new Error("Error! Something went wrong.");
         next(error);
     }
+    // return res.status(200).json({ message: "Register route" , user: newUser });
     
 }
 
@@ -51,7 +49,7 @@ export const login =async (req, res ,next)=>{
        const {email ,password}=req.body;
        const findUser=await User.findOne({email:email});
        if(!findUser){
-        res.send(404).json({message:"User not found"});
+        res.status(404).json({message:"User not found"});
        } 
        const isPasswordCorrect=await Bcrypt.compare(password,findUser.password);
        if(!isPasswordCorrect){
@@ -59,7 +57,7 @@ export const login =async (req, res ,next)=>{
        }
        const token=jwt.sign({newUserId:findUser._id},
         process.env.JWT_SECRET,
-        {expiresIN:"1h"}
+        {expiresIn:"1h"}
     );
      return res.status(200).json({newUserId:findUser._id,token:token});
 
