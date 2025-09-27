@@ -9,8 +9,8 @@ const getTokenFromRequest = (req) => {
 	if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
 		return authHeader.slice('Bearer '.length).trim();
 	}
-	if (req.cookies?.token) return req.cookies.token;
-	if (req.query?.token) return req.query.token;
+	if (req.cookies?.token) return req.cookies.token;// by chance if the token is sotred in cookies
+	if (req.query?.token) return req.query.token;// by chance if the token is stored in query params
 	return null;
 };
 
@@ -20,7 +20,7 @@ export const requireAuth = async (req, res, next) => {
 		if (!token) return res.status(401).json({ message: 'Authentication required' });
 
 		const payload = jwt.verify(token, process.env.JWT_SECRET);
-		const userId = payload?.newUserId || payload?.userId || payload?.id || payload?._id || payload?.sub;
+		const userId = payload?.newUserId || payload?.userId || payload?.id || payload?._id || payload?.sub;// idk about the payload?.sub generally i use it in fastapi not here
 		if (!userId) return res.status(401).json({ message: 'Invalid token payload' });
 
 		const user = await User.findById(userId).select('-password');
@@ -28,7 +28,7 @@ export const requireAuth = async (req, res, next) => {
 
 		req.user = user;
 		req.auth = { token, payload, userId: String(user._id) };
-		return next();
+		next();
 	} catch (err) {
 		if (err?.name === 'TokenExpiredError') return res.status(401).json({ message: 'Token expired' });
 		if (err?.name === 'JsonWebTokenError') return res.status(401).json({ message: 'Invalid token' });

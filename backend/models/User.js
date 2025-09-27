@@ -3,10 +3,7 @@ import { Schema, model } from "mongoose";
 /**
  * User model schema.
  * Represents a user with name, email, password, and admin status.
- * - name: User's full name (required)
- * - email: User's email address (required, unique)
- * - password: User's hashed password (required)
- * - isAdmin: Boolean flag for admin privileges (default: false)
+ * Adds a virtual "profile" referencing UserProfileDetails.
  */
 const UserSchema = new Schema({
   name: {
@@ -25,8 +22,20 @@ const UserSchema = new Schema({
   isAdmin: {
     type: Boolean,
     required: true,
-    default: false, //this one is for admin user if he is not admin then false
+    default: false, // this one is for admin user if he is not admin then false
   }
+}, {
+  timestamps: true
 });
+
+// Virtual relation to user profile details (one-to-one)
+UserSchema.virtual('profile', {
+  ref: 'UserProfileDetails',
+  localField: '_id',
+  foreignField: 'user',
+  justOne: true
+});
+UserSchema.set('toObject',{virtuals:true})
+UserSchema.set('toJSON',{virtuals:true})
 
 export default model("User", UserSchema);
