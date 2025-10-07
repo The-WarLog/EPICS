@@ -6,8 +6,8 @@ dotenv.config();
 
 const getTokenFromRequest = (req) => {
 	const authHeader = req.headers?.authorization || req.headers?.Authorization;
-	if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-		return authHeader.slice('Bearer '.length).trim();
+	if (typeof authHeader === 'string' && authHeader.startsWith('Bearer')) {
+		return authHeader.slice('Bearer'.length).trim();
 	}
 	if (req.cookies?.token) return req.cookies.token;// by chance if the token is sotred in cookies
 	if (req.query?.token) return req.query.token;// by chance if the token is stored in query params
@@ -26,7 +26,7 @@ export const requireAuth = async (req, res, next) => {
 		const user = await User.findById(userId).select('-password');
 		if (!user) return res.status(401).json({ message: 'User not found' });
 
-		req.user = user;
+		req.user = user;// attaching user to req for further use also to prevent loss of user  data during the token validation
 		req.auth = { token, payload, userId: String(user._id) };
 		next();
 	} catch (err) {

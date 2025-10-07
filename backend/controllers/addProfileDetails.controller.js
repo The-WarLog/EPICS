@@ -13,6 +13,7 @@ const addProfileDetails = async (req, res, next) => {
          return res.status(409).json({ message: "Profile already exists" });
       }
       const profile = new profileDetailsModel({ ...req.body, user: userId });
+                                             //^^^^^^^^^^^ (...) this spreads all fields from req.body into the new profile document
       await profile.save();
       return res.status(201).json({ message: "Profile created", data: profile });
    } catch (err) {
