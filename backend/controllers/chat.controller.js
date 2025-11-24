@@ -1,8 +1,10 @@
 
 import { OpenRouter } from '@openrouter/sdk';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const openRouter = new OpenRouter({
-  apiKey: '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',
+  apiKey: process.env.OPENROUTER_API_KEY,
   
 });
 
