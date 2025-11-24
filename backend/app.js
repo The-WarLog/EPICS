@@ -12,6 +12,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerSpec from './swaggerConfig.js';
 import { serve,setup } from 'swagger-ui-express';
 import ImageRouter from './routes/image.routes.js';
+import chatRouter from './controllers/chat.controller.js';
 // Recreate __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,6 +34,8 @@ app.use('/api-docs', serve, setup(swaggerSpec));
 app.use('/api/v1/weather',weatherRoute);
 app.use('/api/v1/users',UserRouter);
 app.use('/api/v1/uploads',ImageRouter)
+//ABHI CHATBOT
+app.use('/api/v1/chat',chatRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
