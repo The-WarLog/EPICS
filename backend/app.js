@@ -34,8 +34,8 @@ app.use('/api-docs', serve, setup(swaggerSpec));
 app.use('/api/v1/weather',weatherRoute);
 app.use('/api/v1/users',UserRouter);
 app.use('/api/v1/uploads',ImageRouter)
-//ABHI CHATBOT
-app.use('/api/v1/chat',chatRouter)
+app.use('/api/v1/chatBot',chatRouter)
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
